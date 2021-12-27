@@ -7,4 +7,9 @@
 * Add "Hangman_Psedocode.rb" to have an overall overview of the program flow for Hangman.
 * The pseudocode later will be converted to flowchart for proper presentation of the program code.
 * Might as well to implement it in Python.
---
+---
+27/12/21
+* Add "Hangman.rb" to the repository
+* Build basic form of Hangman.
+* Create flowchart for the program code (not fully finished).
+---
