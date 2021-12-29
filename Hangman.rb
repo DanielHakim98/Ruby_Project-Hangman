@@ -1,42 +1,56 @@
-words = ["three", "seven", "eight"]
-sample = words.sample.split('')
-letters = sample.uniq
-missing_letters = []
+loaded_txt = Array.new
+File.foreach("5desk.txt") do|line|
+  line=line.chomp.downcase
+  if line.length >= 3 and line.split('').uniq.length >= 3
+    loaded_txt.push(line.chomp)
+  end
+end
+#puts loaded_txt.length--------------check total of loaded words
+
+selected_word = loaded_txt.sample.split('')
+uniq_letters = selected_word.uniq
+missing_uniq_letters = []
 
 3.times do
-  letters=letters.shuffle
-  puts "Letters: #{letters}"
-  missing_letters.push(letters.pop)
-  puts "Missing letters: #{missing_letters}"
+  uniq_letters=uniq_letters.shuffle
+  #puts "uniq_letters: #{uniq_letters}"--------------show the uniq letters
+  missing_uniq_letters.push(uniq_letters.pop)
+  #puts "Missing uniq_letters: #{missing_uniq_letters}"--------------show the missing letters
 end
 
 puts puts
 
-def guess_this(sample,missing_letters)
-  corrupt_sample = sample.clone
-  sample.each_with_index do |letter,idx|
-    next if missing_letters.none?(letter)
-    corrupt_sample[idx] = "_"
+def guess_this(selected_word,missing_uniq_letters)
+  corrupt_selected_word = selected_word.clone
+  selected_word.each_with_index do |letter,idx|
+    next if missing_uniq_letters.none?(letter)
+    corrupt_selected_word[idx] = "_"
   end
-  corrupt_sample
+  corrupt_selected_word
 end
 
-corrupt_sample = guess_this(sample,missing_letters)
+corrupt_selected_word = guess_this(selected_word,missing_uniq_letters)
 
 5.times do
-  p corrupt_sample
-  puts "Please enter the correct letter."
-  guess = gets.chomp
-  if missing_letters.any?(guess)
+  break if missing_uniq_letters.length == 0
+  puts corrupt_selected_word.join(' ')
+  puts "\nPlease enter the correct letter."
+  guess = gets.chomp.downcase
+  if missing_uniq_letters.any?(guess)
     puts "Correct guess"
-    missing_letters.delete(guess)
-    p missing_letters
-    corrupt_sample = guess_this(sample,missing_letters)
+    missing_uniq_letters.delete(guess)
+    #p missing_uniq_letters--------------check the remaining missing uniq_letters
+    corrupt_selected_word = guess_this(selected_word,missing_uniq_letters)
   else
     puts "WRONG"
   end
 end
 
+if missing_uniq_letters.length != 0
+  puts "LOSERRRR...The word is #{selected_word.join}."
+else
+  puts "You are correct. It's #{selected_word.join}"
+end
 
 
 

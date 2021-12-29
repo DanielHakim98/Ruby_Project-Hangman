@@ -13,3 +13,8 @@
 * Build basic form of Hangman.
 * Create flowchart for the program code (not fully finished).
 ---
+29/12/21
+* Add file reading features for saving text from 5desk.txt
+* Change variable name to make it more intuitive and descriptive.
+* Will add save game feature and group the code in Class.
+---
