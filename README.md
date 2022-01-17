@@ -18,3 +18,6 @@
 * Change variable name to make it more intuitive and descriptive.
 * Will add save game feature and group the code in Class.
 ---
+15/12/21
+* Improve class WordGenerator and class GameStarted.
+---
