@@ -21,3 +21,7 @@
 15/12/21
 * Improve class WordGenerator and class GameStarted.
 ---
+20/12/21
+* Add JsonSerialize class to the Hangman.rb
+* Add condition for players to stop the game and save it.
+---

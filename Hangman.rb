@@ -1,5 +1,5 @@
 #-----Read File from 5desk.txt and filter words-----#
-
+require 'json'
 file_name = "5desk.txt"
 class WordGenerator
   attr_reader :file_name, :loaded_txt, :selected_word,
@@ -53,10 +53,34 @@ x = word_generator1.selected_word
 y = word_generator1.missing_uniq_letters
 z = word_generator1.corrupt_selected_word
 
+class JsonSerialize
+  def initialize(selected_word, missing_uniq_letters, corrupt_selected_word,i)
+    @selected = selected_word
+    @missing = missing_uniq_letters
+    @corrupt = corrupt_selected_word
+    @index = i
+    save_to_json()
+  end
+
+  def save_to_json()
+    hash = {
+      "selected"=>@selected,
+      "missing"=>@missing,
+      "corrupt"=>@corrupt,
+      "index"=>@index
+    }
+    Dir.mkdir('save_file') unless Dir.exist?('save_file')
+    File.open("save_file/save.json",'w') do |f|
+      f.write(hash.to_json)
+    end
+  end
+end
+
 # #-----Guess the missing letters-----#
 class GameStarted
-  def initialize(obj,x,y,z)
-    @word_generator = obj
+  def initialize(obj1,obj2,x,y,z)
+    @word_generator = obj1
+    @save_generator = obj2
     @selected_word = x
     @missing_uniq_letters = y
     @corrupt_selected_word = z
@@ -64,12 +88,16 @@ class GameStarted
   end
 
   def start(selected_word, missing_uniq_letters,   corrupt_selected_word)
-    5.times do
+    guess = ""
+    5.times do |i|
+      save_file = JsonSerialize.new(selected_word,missing_uniq_letters,corrupt_selected_word,i)
       break if missing_uniq_letters.length == 0
       puts corrupt_selected_word.join(' ')
       puts "\nPlease enter the correct letter."
       guess = gets.chomp.downcase
-      if missing_uniq_letters.any?(guess)
+      if guess == '2'
+        break
+      elsif missing_uniq_letters.any?(guess)
         puts "Correct guess"
         missing_uniq_letters.delete(guess)
         corrupt_selected_word =
@@ -77,6 +105,10 @@ class GameStarted
       else
          puts "WRONG"
       end
+    end
+    unless guess != '2'
+      puts "\nGame progress has been saved.........."
+      return
     end
     puts GameStarted.final_result(missing_uniq_letters, selected_word)
   end
@@ -89,4 +121,6 @@ class GameStarted
   end
 end
 
-game1 = GameStarted.new(word_generator1,x,y,z)
+save_generator = JsonSerialize.new(x,y,z,0)
+game1 = GameStarted.new(word_generator1,save_generator,x,y,z)
+
