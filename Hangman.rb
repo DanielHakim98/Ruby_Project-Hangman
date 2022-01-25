@@ -1,6 +1,6 @@
 #-----Read File from 5desk.txt and filter words-----#
 require 'json'
-file_name = "5desk.txt"
+
 class WordGenerator
   attr_reader :file_name, :loaded_txt, :selected_word,
               :missing_uniq_letters, :corrupt_selected_word
@@ -48,17 +48,13 @@ class WordGenerator
   end
 end
 
-word_generator1 = WordGenerator.new(file_name)
-x = word_generator1.selected_word
-y = word_generator1.missing_uniq_letters
-z = word_generator1.corrupt_selected_word
 
 class JsonSerialize
   def initialize(selected_word, missing_uniq_letters, corrupt_selected_word,i)
     @selected = selected_word
     @missing = missing_uniq_letters
     @corrupt = corrupt_selected_word
-    @index = i
+    @loop_index = i
     save_to_json()
   end
 
@@ -67,7 +63,7 @@ class JsonSerialize
       "selected"=>@selected,
       "missing"=>@missing,
       "corrupt"=>@corrupt,
-      "index"=>@index
+      "loop_i"=>@loop_index
     }
     Dir.mkdir('save_file') unless Dir.exist?('save_file')
     File.open("save_file/save.json",'w') do |f|
@@ -78,39 +74,46 @@ end
 
 # #-----Guess the missing letters-----#
 class GameStarted
-  def initialize(obj1,obj2,x,y,z)
+  def initialize(obj1,obj2,x,y,z,i=0)
     @word_generator = obj1
     @save_generator = obj2
     @selected_word = x
     @missing_uniq_letters = y
     @corrupt_selected_word = z
-    start(@selected_word,@missing_uniq_letters,@corrupt_selected_word)
+    @loop_index = i.to_i
+    puts @loop_index
+    start()
   end
 
-  def start(selected_word, missing_uniq_letters,   corrupt_selected_word)
+  def start()
     guess = ""
-    5.times do |i|
-      save_file = JsonSerialize.new(selected_word,missing_uniq_letters,corrupt_selected_word,i)
-      break if missing_uniq_letters.length == 0
-      puts corrupt_selected_word.join(' ')
-      puts "\nPlease enter the correct letter."
+    num = 5-@loop_index
+    num.times do |i|
+      break if @missing_uniq_letters.length == 0
+      puts "\n#{num-i} try remaining!"
+      puts @corrupt_selected_word.join(' ')
+      print "\nPlease enter the correct letter: "
       guess = gets.chomp.downcase
-      if guess == '2'
+      if guess == '1'
+        save_file = JsonSerialize.new(@selected_word,
+                                      @missing_uniq_letters,
+                                      @corrupt_selected_word,
+                                      i)
         break
-      elsif missing_uniq_letters.any?(guess)
+      elsif @missing_uniq_letters.any?(guess)
         puts "Correct guess"
-        missing_uniq_letters.delete(guess)
-        corrupt_selected_word =
-        WordGenerator.guess_this(selected_word,missing_uniq_letters)
+        @missing_uniq_letters.delete(guess)
+        @corrupt_selected_word =
+        WordGenerator.guess_this(@selected_word,@missing_uniq_letters)
       else
          puts "WRONG"
       end
     end
-    unless guess != '2'
+    unless guess != '1'
       puts "\nGame progress has been saved.........."
       return
     end
-    puts GameStarted.final_result(missing_uniq_letters, selected_word)
+    puts GameStarted.final_result(@missing_uniq_letters, @selected_word)
   end
 
   private
@@ -121,6 +124,4 @@ class GameStarted
   end
 end
 
-save_generator = JsonSerialize.new(x,y,z,0)
-game1 = GameStarted.new(word_generator1,save_generator,x,y,z)
 

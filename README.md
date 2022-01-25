@@ -18,10 +18,15 @@
 * Change variable name to make it more intuitive and descriptive.
 * Will add save game feature and group the code in Class.
 ---
-15/12/21
+15/1/22
 * Improve class WordGenerator and class GameStarted.
 ---
-20/12/21
+20/1/22
 * Add JsonSerialize class to the Hangman.rb
 * Add condition for players to stop the game and save it.
+---
+25/1/22
+* Add saving progress features and save it in json
+* Display basics interface for Main menu
+* Next: Add option to reset game, Add multiple save game files
 ---
